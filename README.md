@@ -2,6 +2,9 @@
 
 This application listens for barking based on my miniature dachshund, Cody.
 
+![Cody](cody.jpg)
+
+
 # v0
 The first version is based on spectrogram template matching. A sample
 clip is used to create a template and then each recorded clip is compared
