@@ -5,6 +5,19 @@ from scipy.io import wavfile
 
 from ..listener.specgram import create_spectrogram
 
+from ..detector.match import MatchTemplate
+_MT = MatchTemplate(filename="./sirbarksalot/listener/test.wav")
+def get_corr_features(labels, target="is_bark", basedir=""):
+    """
+    """
+    add_dir = lambda x: "{0}{1}".format(basedir, x)
+    df = labels.assign(fpath=labels["filename"].apply(add_dir))
+    data = [get_img(r.fpath, reshape=False) for i, r in df.iterrows()]
+
+    # turn the images into correlation features
+    scores = [_MT.calculate_score(d) for d in data]
+    return np.array(scores).reshape((len(scores), 1)), labels[target].values
+
 def get_labels(filename="labels.csv"):
     """ read the labels as a csv file
 
@@ -30,11 +43,13 @@ DEFAULTS = {
     "overlap": 192
 }
 
-def get_img(filename, parameters=DEFAULTS):
+def get_img(filename, parameters=DEFAULTS, reshape=True):
     """ create a single spectrogram
     """
     rate, data = wavfile.read(filename)
-    img = create_spectrogram(data, **parameters)[::2, ::2]
+    img = create_spectrogram(data, **parameters)[::4, ::16]
+    if not reshape:
+        return img
     n_pixels = img.shape[1] * img.shape[0]
     return img.reshape(img.shape + (1, ))
 

@@ -13,7 +13,8 @@ def create_spectrogram(data, n_fft=512, fs=44100, overlap=192):
         "noverlap": overlap
     }
     _specgram, freqs, bins =  mlab.specgram(data.copy(), **params)
-    return preprocess(_specgram)
+    # return preprocess(_specgram)
+    return min_max_scale(_specgram) / 255.
 
 def min_max_scale(img):
     _min, _max = np.min(img), np.max(img)
