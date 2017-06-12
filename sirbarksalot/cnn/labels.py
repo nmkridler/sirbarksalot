@@ -12,7 +12,8 @@ def get_corr_features(labels, target="is_bark", basedir=""):
     """
     add_dir = lambda x: "{0}{1}".format(basedir, x)
     df = labels.assign(fpath=labels["filename"].apply(add_dir))
-    data = [get_img(r.fpath, reshape=False) for i, r in df.iterrows()]
+    kws = {"reshape": False, "downsample": False}
+    data = [get_img(r.fpath, **kws) for i, r in df.iterrows()]
 
     # turn the images into correlation features
     scores = [_MT.calculate_score(d) for d in data]
@@ -43,11 +44,13 @@ DEFAULTS = {
     "overlap": 192
 }
 
-def get_img(filename, parameters=DEFAULTS, reshape=True):
+def get_img(filename, parameters=DEFAULTS, reshape=True, downsample=True):
     """ create a single spectrogram
     """
     rate, data = wavfile.read(filename)
-    img = create_spectrogram(data, **parameters)[::4, ::16]
+    img = create_spectrogram(data, norm=True, **parameters)
+    if downsample:
+        img = img[::4, ::16]
     if not reshape:
         return img
     n_pixels = img.shape[1] * img.shape[0]
