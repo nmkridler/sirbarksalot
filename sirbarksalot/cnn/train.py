@@ -30,10 +30,8 @@ def baseline_model(input_shape=None):
 def another_model(input_shape=None):
     model = Sequential()
     model.add(Conv2D(32, 5, 5, activation='relu', input_shape=input_shape))
-    # model.add(Conv2D(32, 3, 3, activation='relu'))
     model.add(MaxPooling2D())
     model.add(Conv2D(64, 3, 3, activation='relu'))
-    # model.add(Conv2D(64, 3, 3, activation='relu'))
     model.add(MaxPooling2D())
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
@@ -95,12 +93,13 @@ def pipeline(X, y, batch_size=32, epochs=20, kfold=False, save=False):
         #
         kfold = StratifiedKFold(n_splits=4, shuffle=False, random_state=1337)
         _y = run_folds(estimator, X, y, kfold)
-    # _out = pd.DataFrame({
-    #     "target": y,
-    #     "prediction": _y
-    # })
-    # _out.to_csv("./cnnout.csv", index=False)
+        _out = pd.DataFrame({
+            "target": y,
+            "prediction": _y
+        })
+        _out.to_csv("./cnnout.csv", index=False)
+
     if save:
         model = another_model(input_shape=X.shape[1:])
         model.fit(X, y, nb_epoch=epochs, batch_size=batch_size)
-        model.save('./cnnmodel2.h5')
+        model.save('./cnnmodel3.h5')
