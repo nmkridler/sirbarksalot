@@ -21,7 +21,7 @@ logger = logging.getLogger("sirbarksalot")
 logger.setLevel('INFO')
 
 _MT = MatchTemplate(filename="./sirbarksalot/listener/test.wav")
-_CNN = CNN(filename="cnnmodel2.h5")
+_CNN = CNN(filename="cnnmodel3.h5")
 
 _LISTEN = Listener()
 _LISTEN.start_stream()
@@ -54,13 +54,11 @@ def listen():
     if (scoreMT > 0.75) or (scoreCNN > 0.75):
         _ms = "{0}".format(time.time()).split(".")[0]
         logger.info("{0}|{1}|{2}".format(_ms, scoreMT, scoreCNN))
-        # logger.info("Bark Found! Correlation: {}".format(score))
         if scoreMT > 0.75:
             _MT.save_score(scoreMT)
 
         _LISTEN.write_to_file(data, make_filename("wav", _ms))
         save_specgram_to_file(data, make_filename("png", _ms))
-        # write_to_png(_specgram, make_filename("png", _ms))
 
     if _MT.counter == 10:
         if _MT.scores:
