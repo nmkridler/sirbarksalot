@@ -43,11 +43,11 @@ class Listener(object):
 
     def record(self):
         """"""
-        i, frames = 0, []
-        while i < self.n_frames:
-            data = self.stream.read(self._config["frames_per_buffer"])
-            frames.append(data)
-            i += 1
+        frames = []
+        while len(frames) < self.n_frames:
+            frames.append(
+                self.stream.read(self._config["frames_per_buffer"])
+            )
         return np.fromstring(b''.join(frames), dtype=np.int16)
 
     def write_to_file(self, data, filename):
